@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class App {
@@ -33,20 +32,45 @@ public class App {
                         System.out.println("Vänligen ange personnummer på 10 eller 12 siffror");
                         break;
                     } else {
-                        luhnAlgorithm(validityCheck(personNummer));
+                        if (luhnAlgorithm(validityCheck(personNummer))) {
+                            System.out.println("Personnumret är validerad och giltig");
+                        } else {
+                            System.out.println("Personnumret är ogiltigt");
+                        }
                     }
                     break;
                 case 'B':
                     // Validera samordningsnummer här, returnera true or false
                     System.out.println("skriv in samordningsnummer");
                     String samNummer = scanner.next();
-                    System.out.println(samNummer);
+                    if (validityCheck(samNummer) == null) {
+                        System.out.println("vänligen ange ett samordningsnummer på 10 eller 12 siffror");
+                    } else {
+                        if (checkSamordning(validityCheck(samNummer))) {
+                            System.out.println("samordningsnumret är giltigt");
+                            break;
+                        } else {
+                            System.out.println("samordnings numret är ogiltigt");
+                            break;
+                        }
+                    }
                     break;
                 case 'C':
                     // Validera org nummer här, returnera true or false
                     System.out.println("skriv in organisationsnummer");
                     String orgNummer = scanner.next();
-                    System.out.println(orgNummer);
+
+                    if (validityCheck(orgNummer) == null) {
+                        System.out.println("vänligen ange ett samordningsnummer på 10 eller 12 siffror");
+                    } else {
+                        if (checkOrganisationsnummer(validityCheck(orgNummer))) {
+                            System.out.println("organisationsnumret är giltigt");
+                            break;
+                        } else {
+                            System.out.println("organisationsnumret är ogiltigt");
+                            break;
+                        }
+                    }
                     break;
                 case 'D':
                     // Stäng program
@@ -77,8 +101,6 @@ public class App {
 
         int[] inputArray = new int[input.length()];
 
-        // String[] splited = input.split(" ");
-
         for (int i = 0; i < input.length(); i++) {
             inputArray[i] = Integer.parseInt(input.substring(i, i + 1));
         }
@@ -87,7 +109,6 @@ public class App {
     }
 
     private static boolean luhnAlgorithm(int[] numbers) {
-        // System.out.println(Arrays.toString(numbers));
 
         for (int i = numbers.length - 2; i >= 0; i = i - 2) {
             int tempValue = numbers[i];
@@ -114,15 +135,44 @@ public class App {
             total += numbersLastIndexRemoved[i];
         }
 
-        // System.out.println(Arrays.toString(numbersLastIndexRemoved));
-
-        // System.out.println(Arrays.toString(numbers));
         int calculatedControlNumber = (10 - (total % 10)) % 10;
 
-        System.out.println(calculatedControlNumber);
-        System.out.println(controlNumber);
+        if (calculatedControlNumber == controlNumber) {
 
-        return true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private static boolean checkSamordning(int[] input) {
+        // System.out.println(Arrays.toString(input));
+        int x = input[4];
+
+        if (x < 6 || x > 9) {
+            return false;
+        }
+
+        if (luhnAlgorithm(input)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    private static boolean checkOrganisationsnummer(int[] input) {
+        int x = input[3];
+        if (x < 2) {
+            return false;
+        }
+
+        if (luhnAlgorithm(input)) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
 }
