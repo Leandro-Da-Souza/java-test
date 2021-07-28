@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class App {
@@ -25,9 +26,15 @@ public class App {
                     // Validera personnummer här, returnera true or false
                     System.out.println("Skriv in personnummer");
                     String personNummer = scanner.next();
+
                     System.out.println();
-                    System.out.println(personNummer.length());
-                    System.out.println(validityCheck(personNummer));
+
+                    if (validityCheck(personNummer) == null) {
+                        System.out.println("Vänligen ange personnummer på 10 eller 12 siffror");
+                        break;
+                    } else {
+                        luhnAlgorithm(validityCheck(personNummer));
+                    }
                     break;
                 case 'B':
                     // Validera samordningsnummer här, returnera true or false
@@ -54,26 +61,68 @@ public class App {
         scanner.close();
     }
 
-    private static boolean validityCheck(String input) {
-        int[] inputArray = new int[input.length()];
+    private static int[] validityCheck(String input) {
 
-        // generella checks
         if (input.contains("-") || input.contains("+") || input.contains("/")) {
             input = input.replaceAll("[^0-9]", "");
         }
 
         if (input.length() < 10 || input.length() > 12) {
-            return false;
+            return null;
         }
 
         if (input.length() == 12) {
             input = input.substring(2, input.length());
         }
 
-        System.out.println(input);
+        int[] inputArray = new int[input.length()];
+
+        // String[] splited = input.split(" ");
+
+        for (int i = 0; i < input.length(); i++) {
+            inputArray[i] = Integer.parseInt(input.substring(i, i + 1));
+        }
+
+        return inputArray;
+    }
+
+    private static boolean luhnAlgorithm(int[] numbers) {
+        // System.out.println(Arrays.toString(numbers));
+
+        for (int i = numbers.length - 2; i >= 0; i = i - 2) {
+            int tempValue = numbers[i];
+            tempValue = tempValue * 2;
+            if (tempValue > 9) {
+                tempValue = tempValue % 10 + 1;
+            }
+            numbers[i] = tempValue;
+        }
+
+        int controlNumber = numbers[numbers.length - 1];
+
+        int[] numbersLastIndexRemoved = new int[numbers.length - 1];
+
+        for (int i = 0, j = 0; i < numbers.length; i++) {
+            if (i != 9) {
+                numbersLastIndexRemoved[j++] = numbers[i];
+            }
+        }
+
+        int total = 0;
+
+        for (int i = 0; i < numbersLastIndexRemoved.length; i++) {
+            total += numbersLastIndexRemoved[i];
+        }
+
+        // System.out.println(Arrays.toString(numbersLastIndexRemoved));
+
+        // System.out.println(Arrays.toString(numbers));
+        int calculatedControlNumber = (10 - (total % 10)) % 10;
+
+        System.out.println(calculatedControlNumber);
+        System.out.println(controlNumber);
 
         return true;
-
     }
 
 }
